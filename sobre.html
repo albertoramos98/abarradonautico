@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sobre Nos - Os Centenarios dos Aflitos</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .about-section {
+            padding: 80px 0;
+        }
+        
+        .about-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .about-header h2 {
+            font-size: 2.5rem;
+            color: var(--vermelho);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .about-header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+        
+        .timeline {
+            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+        
+        .timeline::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background-color: var(--vermelho);
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            margin-left: -3px;
+        }
+        
+        .timeline-item {
+            padding: 10px 40px;
+            position: relative;
+            width: 50%;
+            box-sizing: border-box;
+        }
+        
+        .timeline-item::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            right: -12px;
+            background-color: var(--branco);
+            border: 4px solid var(--vermelho);
+            top: 15px;
+            border-radius: 50%;
+            z-index: 1;
+        }
+        
+        .left {
+            left: 0;
+        }
+        
+        .right {
+            left: 50%;
+        }
+        
+        .right::after {
+            left: -12px;
+        }
+        
+        .timeline-content {
+            padding: 20px 30px;
+            background-color: var(--branco);
+            position: relative;
+            border-radius: 6px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timeline-content h3 {
+            font-size: 1.5rem;
+            color: var(--vermelho);
+            margin-bottom: 10px;
+        }
+        
+        .timeline-content .date {
+            font-weight: bold;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: var(--cinza-escuro);
+        }
+        
+        .timeline-content p {
+            line-height: 1.6;
+        }
+        
+        .team-section {
+            padding: 80px 0;
+            background-color: var(--cinza-claro);
+        }
+        
+        .team-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .team-header h2 {
+            font-size: 2.5rem;
+            color: var(--vermelho);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+        
+        .team-header p {
+            max-width: 800px;
+            margin: 0 auto;
+            font-size: 1.1rem;
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+        }
+        
+        .team-member {
+            background-color: var(--branco);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        .team-member img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .team-info {
+            padding: 20px;
+        }
+        
+        .team-info h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: var(--vermelho);
+        }
+        
+        .team-info p {
+            color: var(--cinza-escuro);
+            margin-bottom: 15px;
+        }
+        
+        .team-social {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .team-social a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background-color: var(--vermelho);
+            color: var(--branco);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .team-social a:hover {
+            background-color: var(--cinza-escuro);
+        }
+        
+        @media (max-width: 768px) {
+            .timeline::after {
+                left: 31px;
+            }
+            
+            .timeline-item {
+                width: 100%;
+                padding-left: 70px;
+                padding-right: 25px;
+            }
+            
+            .timeline-item::after {
+                left: 18px;
+                right: auto;
+            }
+            
+            .left, .right {
+                left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                Os Centenarios <span>dos Aflitos</span>
+            </a>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="produtos.html">Produtos</a></li>
+                <li><a href="galeria.html">Galeria</a></li>
+                <li><a href="sobre.html">Sobre Nos</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- About Banner -->
+    <section class="hero" style="padding: 60px 0;">
+        <div class="container">
+            <h1>Sobre Nos</h1>
+            <p>Conheça a história e a paixão da torcida Os Centenários dos Aflitos pelo Clube Náutico Capibaribe.</p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-header">
+                <h2>Nossa História</h2>
+                <p>Os Centenários dos Aflitos nasceu da paixão de torcedores que compartilham o amor incondicional pelo Clube Náutico Capibaribe. Desde nossa fundação, temos como missão apoiar o Timbu em todos os momentos, seja nas vitórias ou nas derrotas.</p>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>Fundação</h3>
+                        <div class="date">Janeiro de 2015</div>
+                        <p>A torcida Os Centenários dos Aflitos foi fundada por um grupo de amigos apaixonados pelo Náutico, com o objetivo de criar um movimento organizado para apoiar o clube em todos os jogos.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>Primeiro Bandeirão</h3>
+                        <div class="date">Março de 2015</div>
+                        <p>Criação e estreia do primeiro bandeirão da torcida, com as cores vermelho e branco e o símbolo do Timbu, em um jogo decisivo pelo Campeonato Pernambucano.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>Crescimento</h3>
+                        <div class="date">2016 - 2018</div>
+                        <p>Período de grande crescimento da torcida, com aumento significativo no número de membros e presença constante nos jogos do Náutico, tanto em casa quanto fora.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item right">
+                    <div class="timeline-content">
+                        <h3>Ações Sociais</h3>
+                        <div class="date">2019 - Presente</div>
+                        <p>Início das ações sociais da torcida, com campanhas de arrecadação de alimentos, roupas e brinquedos para comunidades carentes de Recife, reforçando nosso compromisso com a sociedade.</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item left">
+                    <div class="timeline-content">
+                        <h3>Loja Oficial</h3>
+                        <div class="date">2025</div>
+                        <p>Lançamento da loja oficial da torcida Os Centenários dos Aflitos, oferecendo produtos exclusivos para os torcedores do Náutico mostrarem seu amor pelo clube.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="container">
+            <div class="team-header">
+                <h2>Nossa Diretoria</h2>
+                <p>Conheça os membros da diretoria da torcida Os Centenários dos Aflitos, responsáveis por organizar nossas atividades e manter viva a paixão pelo Náutico.</p>
+            </div>
+            
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="images/maconha-1.jpg" alt="Presidente">
+                    <div class="team-info">
+                        <h3>Alfredo Bianchi</h3>
+                        <p>Presidente</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <img src="images/raposo.png" alt="Vice-Presidente">
+                    <div class="team-info">
+                        <h3>Marcelo Raposo</h3>
+                        <p>Vice-Presidente</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <img src="images/059c746da527ee6cd05edfd4c36161e5-gpMega.jpg" alt="Diretor Financeiro">
+                    <div class="team-info">
+                        <h3>Valdei junior</h3>
+                        <p>Diretor</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="team-member">
+                    <img src="images/WhatsApp Image 2025-05-21 at 00.21.58.jpeg" alt="Diretor de Eventos">
+                    <div class="team-info">
+                        <h3>Marcelo Vinicius</h3>
+                        <p>Diretor</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3>Os Centenários dos Aflitos</h3>
+                    <p>A torcida mais apaixonada do Clube Náutico Capibaribe.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Links Rápidos</h3>
+                    <a href="index.html">Início</a>
+                    <a href="produtos.html">Produtos</a>
+                    <a href="galeria.html">Galeria</a>
+                    <a href="sobre.html">Sobre Nós</a>
+                    <a href="contato.html">Contato</a>
+                </div>
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> Recife, Pernambuco</p>
+                    <p><i class="fas fa-phone"></i> (81) 9999-9999</p>
+                    <p><i class="fas fa-envelope"></i> contato@centenariosafitos.com.br</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Os Centenários dos Aflitos. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

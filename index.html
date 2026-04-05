@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Os Centenários dos Aflitos - Torcida do Náutico</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                Os Centenarios <span>dos Aflitos</span>
+            </a>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="produtos.html">Produtos</a></li>
+                <li><a href="galeria.html">Galeria</a></li>
+                <li><a href="sobre.html">Sobre Nos</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h1 data-cms="hero_title">Os Centenarios dos Aflitos</h1>
+            <p data-cms="hero_description">A Barra Brava do Clube Náutico Capibaribe.</p>
+            <a href="produtos.html" class="btn">Ver Produtos</a>
+            <a href="sobre.html" class="btn btn-outline">Conheça Nossa História</a>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="featured">
+        <div class="container">
+            <div class="section-title">
+                <h2>Produtos em Destaque</h2>
+            </div>
+            <div class="products-grid">
+                <!-- Dynamically populated from Supabase -->
+                <p>Carregando destaques...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-img">
+                    <img src="images/12anos.jpg" alt="Torcida Os Centenarios dos Aflitos" data-cms="about_img">
+                </div>
+                <div class="about-text">
+                    <h2 data-cms="about_title">Quem Somos</h2>
+                    <p data-cms="about_description_1">Os Centenários dos Aflitos é uma torcida apaixonada do Clube Náutico Capibaribe, fundada por torcedores que compartilham o amor incondicional pelo time. Nossa missão é apoiar o Náutico em todos os momentos, seja nas vitórias ou nas derrotas.</p>
+                    <p data-cms="about_description_2">Nosso nome homenageia o centenário do clube e o histórico Estádio dos Aflitos, palco de tantas glórias do Timbu. Vestimos com orgulho as cores vermelho e branco e levamos nossa paixão a todos os cantos.</p>
+                    <a href="sobre.html" class="btn">Saiba Mais</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3 data-cms="footer_title">Os Centenários dos Aflitos</h3>
+                    <p data-cms="footer_description">A torcida mais apaixonada do Clube Náutico Capibaribe.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Links Rápidos</h3>
+                    <a href="index.html">Início</a>
+                    <a href="produtos.html">Produtos</a>
+                    <a href="galeria.html">Galeria</a>
+                    <a href="sobre.html">Sobre Nós</a>
+                    <a href="contato.html">Contato</a>
+                </div>
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <span data-cms="contact_address">Recife, Pernambuco</span></p>
+                    <p><i class="fas fa-phone"></i> <span data-cms="contact_phone">(81) 9999-9999</span></p>
+                    <p><i class="fas fa-envelope"></i> <span data-cms="contact_email">contato@centenariosafitos.com.br</span></p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Os Centenários dos Aflitos. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/cms_dynamic.js"></script>
+    <script src="js/featured_products.js"></script>
+</body>
+</html>

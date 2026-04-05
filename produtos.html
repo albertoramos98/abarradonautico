@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Produtos - Os Centenarios dos Aflitos</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        .products-section {
+            padding: 80px 0;
+        }
+        
+        .products-filter {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background-color: transparent;
+            border: 2px solid var(--vermelho);
+            color: var(--vermelho);
+            padding: 8px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-family: 'Ultras Liberi', Arial, sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background-color: var(--vermelho);
+            color: var(--branco);
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 50px;
+        }
+        
+        .pagination a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            margin: 0 5px;
+            border-radius: 4px;
+            background-color: var(--cinza-claro);
+            color: var(--cinza-escuro);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .pagination a:hover, .pagination a.active {
+            background-color: var(--vermelho);
+            color: var(--branco);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                Os Centenarios <span>dos Aflitos</span>
+            </a>
+            <div class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html">Inicio</a></li>
+                <li><a href="produtos.html">Produtos</a></li>
+                <li><a href="galeria.html">Galeria</a></li>
+                <li><a href="sobre.html">Sobre Nos</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+        </div>
+    </header>
+
+    <!-- Products Banner -->
+    <section class="hero" style="padding: 60px 0;">
+        <div class="container">
+            <h1 data-cms="products_title">Nossos Produtos</h1>
+            <p data-cms="products_description">Vista-se com orgulho e mostre seu amor pelo Náutico com nossa coleção exclusiva.</p>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section">
+        <div class="container">
+            <div class="products-filter">
+                <button class="filter-btn active">Todos</button>
+                <button class="filter-btn">Camisas</button>
+                <button class="filter-btn">Acessórios</button>
+                <button class="filter-btn">Decoração</button>
+                <button class="filter-btn">Bandeiras</button>
+            </div>
+            
+            <div class="product-grid" id="product-grid">
+                <!-- Dynamically populated from Supabase -->
+                <div class="loading-products" style="grid-column: 1/-1; text-align: center; padding: 50px;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--vermelho);"></i>
+                    <p>Carregando produtos...</p>
+                </div>
+            </div>
+            
+            <div class="pagination">
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#"><i class="fas fa-angle-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-container">
+                <div class="footer-col">
+                    <h3 data-cms="footer_title">Os Centenários dos Aflitos</h3>
+                    <p data-cms="footer_description">A torcida mais apaixonada do Clube Náutico Capibaribe.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h3>Links Rápidos</h3>
+                    <a href="index.html">Início</a>
+                    <a href="produtos.html">Produtos</a>
+                    <a href="galeria.html">Galeria</a>
+                    <a href="sobre.html">Sobre Nós</a>
+                    <a href="contato.html">Contato</a>
+                </div>
+                <div class="footer-col">
+                    <h3>Contato</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> <span data-cms="contact_address">Recife, Pernambuco</span></p>
+                    <p><i class="fas fa-phone"></i> <span data-cms="contact_phone">(81) 9999-9999</span></p>
+                    <p><i class="fas fa-envelope"></i> <span data-cms="contact_email">contato@centenariosafitos.com.br</span></p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025 Os Centenários dos Aflitos. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/cms_dynamic.js"></script>
+    <script src="js/products_dynamic.js"></script>
+</body>
+</html>
