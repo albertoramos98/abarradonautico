@@ -1,6 +1,7 @@
 // Admin Dashboard Logic
 let selectedFiles = [];
 let currentProductImages = [];
+let aboutHomeFile = null;
 
 document.addEventListener('DOMContentLoaded', async function() {
     // 1. Auth Check
@@ -18,18 +19,23 @@ document.addEventListener('DOMContentLoaded', async function() {
             tabs.forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             tab.classList.add('active');
-            document.getElementById(tab.dataset.tab).classList.add('active');
+            const targetId = tab.dataset.tab;
+            document.getElementById(targetId).classList.add('active');
             
-            if (tab.dataset.tab === 'products') loadProducts();
-            if (tab.dataset.tab === 'cms') loadCMS();
+            if (targetId === 'products') loadProducts();
+            if (targetId === 'cms') loadCMS();
+            if (targetId === 'gallery') loadGallery();
+            if (targetId === 'about') loadAbout();
         });
     });
 
     // Initial Load
     loadProducts();
 
-    // 3. Product Form Submission
+    // Forms
     document.getElementById('product-form').addEventListener('submit', handleProductSubmit);
+    document.getElementById('gallery-form').addEventListener('submit', handleGallerySubmit);
+    document.getElementById('about-form').addEventListener('submit', handleAboutSubmit);
 });
 
 async function logout() {
@@ -37,34 +43,31 @@ async function logout() {
     window.location.href = 'index.html';
 }
 
-// --- PRODUCT MANAGEMENT ---
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
+}
 
+// --- PRODUCT MANAGEMENT ---
 async function loadProducts() {
     const { data, error } = await window.supabaseClient
         .from('products')
         .select('*, inventory(quantity, hide_if_out_of_stock), product_images(*)');
-    
     if (error) return console.error(error);
-
     const tbody = document.getElementById('product-list-body');
     tbody.innerHTML = '';
-
     data.forEach(product => {
         const mainImg = product.product_images.find(img => img.is_main) || product.product_images[0];
         const imgUrl = mainImg ? mainImg.url : '../images/placeholder.jpg';
         const stock = product.inventory[0]?.quantity || 0;
-
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td><img src="${imgUrl}" style="width:50px; height:50px; object-fit:cover;"></td>
             <td>${product.name}</td>
             <td>R$ ${product.price.toFixed(2)}</td>
             <td>${stock}</td>
-            <td>${product.category}</td>
-            <td><span style="color: ${product.status === 'active' ? 'green' : 'red'}">${product.status}</span></td>
             <td>
-                <button onclick="editProduct('${product.id}')" class="btn" style="padding: 2px 8px; font-size: 0.8rem;">Editar</button>
-                <button onclick="deleteProduct('${product.id}')" class="btn" style="padding: 2px 8px; font-size: 0.8rem; background: red;">Excluir</button>
+                <button onclick="editProduct('${product.id}')" class="btn-icon btn-edit"><i class="fas fa-edit"></i></button>
+                <button onclick="deleteProduct('${product.id}')" class="btn-icon btn-delete"><i class="fas fa-trash"></i></button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -74,49 +77,22 @@ async function loadProducts() {
 function openProductModal(product = null) {
     const modal = document.getElementById('product-modal');
     const form = document.getElementById('product-form');
-    const title = document.getElementById('modal-title');
-    
+    document.getElementById('modal-title').textContent = product ? 'EDITAR PRODUTO' : 'NOVO PRODUTO';
     form.reset();
-    document.getElementById('product-id').value = '';
+    document.getElementById('product-id').value = product ? product.id : '';
     document.getElementById('preview-container').innerHTML = '';
     selectedFiles = [];
     currentProductImages = [];
-
     if (product) {
-        title.textContent = 'Editar Produto';
-        document.getElementById('product-id').value = product.id;
         document.getElementById('prod-name').value = product.name;
-        document.getElementById('prod-desc').value = product.description;
+        document.getElementById('prod-desc').value = product.description || '';
         document.getElementById('prod-price').value = product.price;
         document.getElementById('prod-category').value = product.category;
-        document.getElementById('prod-status').value = product.status;
-        
-        if (product.inventory[0]) {
-            document.getElementById('prod-stock').value = product.inventory[0].quantity;
-            document.getElementById('prod-hide-out').checked = product.inventory[0].hide_if_out_of_stock;
-        }
-
+        document.getElementById('prod-stock').value = product.inventory[0]?.quantity || 0;
         currentProductImages = product.product_images || [];
         renderImagePreviews();
-    } else {
-        title.textContent = 'Novo Produto';
     }
-
     modal.style.display = 'flex';
-}
-
-function closeProductModal() {
-    document.getElementById('product-modal').style.display = 'none';
-}
-
-async function editProduct(id) {
-    const { data, error } = await window.supabaseClient
-        .from('products')
-        .select('*, inventory(quantity, hide_if_out_of_stock), product_images(*)')
-        .eq('id', id)
-        .single();
-    
-    if (data) openProductModal(data);
 }
 
 async function handleProductSubmit(e) {
@@ -126,128 +102,58 @@ async function handleProductSubmit(e) {
     const description = document.getElementById('prod-desc').value;
     const price = parseFloat(document.getElementById('prod-price').value);
     const category = document.getElementById('prod-category').value;
-    const status = document.getElementById('prod-status').value;
     const quantity = parseInt(document.getElementById('prod-stock').value);
-    const hideIfOut = document.getElementById('prod-hide-out').checked;
 
     let productId = id;
-
-    // 1. Save Product
     if (id) {
-        const { error } = await window.supabaseClient.from('products').update({
-            name, description, price, category, status
-        }).eq('id', id);
-        if (error) return alert(error.message);
+        await window.supabaseClient.from('products').update({ name, description, price, category }).eq('id', id);
     } else {
-        const { data, error } = await window.supabaseClient.from('products').insert([{
-            name, description, price, category, status
-        }]).select().single();
-        if (error) return alert(error.message);
+        const { data } = await window.supabaseClient.from('products').insert([{ name, description, price, category }]).select().single();
         productId = data.id;
     }
-
-    // 2. Save Inventory
-    await window.supabaseClient.from('inventory').upsert({
-        product_id: productId,
-        quantity: quantity,
-        hide_if_out_of_stock: hideIfOut
-    });
-
-    // 3. Upload New Images
+    await window.supabaseClient.from('inventory').upsert({ product_id: productId, quantity });
+    
     for (const file of selectedFiles) {
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `products/${fileName}`;
-
-        const { error: uploadError } = await window.supabaseClient.storage
-            .from('products')
-            .upload(filePath, file);
-
-        if (!uploadError) {
-            const { data: { publicUrl } } = window.supabaseClient.storage
-                .from('products')
-                .getPublicUrl(filePath);
-
-            await window.supabaseClient.from('product_images').insert({
-                product_id: productId,
-                url: publicUrl,
-                is_main: false
-            });
+        const fileName = `products/${Date.now()}-${file.name}`;
+        const { data: uploadData } = await window.supabaseClient.storage.from('products').upload(fileName, file);
+        if (uploadData) {
+            const { data: { publicUrl } } = window.supabaseClient.storage.from('products').getPublicUrl(fileName);
+            await window.supabaseClient.from('product_images').insert({ product_id: productId, url: publicUrl });
         }
     }
-
-    alert('Produto salvo com sucesso!');
-    closeProductModal();
+    alert('PRODUTO SALVO!');
+    closeModal('product-modal');
     loadProducts();
 }
 
-// --- IMAGE VALIDATION & PREVIEW ---
-
 function validateAndPreviewImages(input) {
     const files = Array.from(input.files);
-    
     files.forEach(file => {
-        // Size check (2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            alert(`Imagem ${file.name} excede 2MB.`);
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                // Dimension check
-                if (img.width < 500 || img.height < 500) {
-                    alert(`Imagem ${file.name} muito pequena (mínimo 500x500px).`);
-                    return;
-                }
-                
-                // Ratio check (with some tolerance)
-                const ratio = img.width / img.height;
-                if (ratio < 0.9 || ratio > 1.1) {
-                    alert(`Imagem ${file.name} não está na proporção 1:1.`);
-                }
-
-                selectedFiles.push(file);
-                renderImagePreviews();
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+        if (file.size > 2 * 1024 * 1024) return alert('Máximo 2MB');
+        selectedFiles.push(file);
+        renderImagePreviews();
     });
 }
 
 function renderImagePreviews() {
     const container = document.getElementById('preview-container');
     container.innerHTML = '';
-
-    // Existing Images
     currentProductImages.forEach(img => {
         const div = document.createElement('div');
         div.className = 'image-preview-item';
-        div.innerHTML = `
-            <img src="${img.url}">
-            <button type="button" class="btn-delete-img" onclick="removeExistingImage('${img.id}')">&times;</button>
-        `;
+        div.innerHTML = `<img src="${img.url}"><button type="button" class="btn-delete-img" onclick="removeExistingImage('${img.id}')">&times;</button>`;
         container.appendChild(div);
     });
-
-    // New Selected Files
     selectedFiles.forEach((file, index) => {
         const div = document.createElement('div');
         div.className = 'image-preview-item';
-        const url = URL.createObjectURL(file);
-        div.innerHTML = `
-            <img src="${url}">
-            <button type="button" class="btn-delete-img" onclick="removeSelectedFile(${index})">&times;</button>
-        `;
+        div.innerHTML = `<img src="${URL.createObjectURL(file)}"><button type="button" class="btn-delete-img" onclick="removeSelectedFile(${index})">&times;</button>`;
         container.appendChild(div);
     });
 }
 
 async function removeExistingImage(id) {
-    if (confirm('Excluir esta imagem?')) {
+    if (confirm('EXCLUIR IMAGEM?')) {
         await window.supabaseClient.from('product_images').delete().eq('id', id);
         currentProductImages = currentProductImages.filter(img => img.id !== id);
         renderImagePreviews();
@@ -260,38 +166,140 @@ function removeSelectedFile(index) {
 }
 
 async function deleteProduct(id) {
-    if (confirm('Tem certeza que deseja excluir este produto?')) {
+    if (confirm('Deseja excluir este produto?')) {
         await window.supabaseClient.from('products').delete().eq('id', id);
         loadProducts();
     }
 }
 
 // --- CMS MANAGEMENT ---
-
 async function loadCMS() {
-    const { data, error } = await window.supabaseClient.from('site_content').select('*');
-    if (error) return;
-
+    const { data } = await window.supabaseClient.from('site_content').select('*');
     const container = document.getElementById('cms-list');
     container.innerHTML = '';
-
     data.forEach(item => {
         const div = document.createElement('div');
-        div.style.marginBottom = '15px';
+        div.className = 'card-admin';
         div.style.padding = '15px';
-        div.style.background = '#eee';
-        div.innerHTML = `
-            <label style="font-weight:bold; display:block;">${item.description || item.key}</label>
-            <textarea style="width:100%; padding:8px; margin-top:5px;" id="cms-${item.id}">${item.value}</textarea>
-            <button onclick="saveCMS('${item.id}')" class="btn" style="margin-top:5px;">Salvar</button>
-        `;
+        div.innerHTML = `<label>${item.description || item.key}</label><textarea id="cms-${item.id}">${item.value}</textarea><button onclick="saveCMS('${item.id}')" class="btn-admin" style="margin-top:10px;">SALVAR</button>`;
         container.appendChild(div);
     });
 }
 
 async function saveCMS(id) {
     const val = document.getElementById(`cms-${id}`).value;
-    const { error } = await window.supabaseClient.from('site_content').update({ value: val }).eq('id', id);
-    if (error) alert(error.message);
-    else alert('Conteúdo atualizado!');
+    await window.supabaseClient.from('site_content').update({ value: val }).eq('id', id);
+    alert('CONTEÚDO SALVO!');
+}
+
+// --- GALLERY MANAGEMENT ---
+function openGalleryModal() {
+    document.getElementById('gallery-form').reset();
+    document.getElementById('gallery-modal').style.display = 'flex';
+}
+
+async function loadGallery(category = 'Todos') {
+    let query = window.supabaseClient.from('gallery').select('*');
+    if (category !== 'Todos') query = query.eq('category', category);
+    const { data } = await query.order('created_at', { ascending: false });
+    
+    const container = document.getElementById('gallery-list');
+    container.innerHTML = '';
+    data.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'image-preview-item';
+        div.style.width = '150px';
+        div.style.height = '150px';
+        div.innerHTML = `<img src="${item.url}"><button onclick="deleteGallery('${item.id}')" class="btn-delete-img">&times;</button>`;
+        container.appendChild(div);
+    });
+}
+
+function filterGallery(cat) {
+    document.querySelectorAll('.filter-btn-admin').forEach(b => b.classList.remove('active'));
+    event.target.classList.add('active');
+    loadGallery(cat);
+}
+
+async function handleGallerySubmit(e) {
+    e.preventDefault();
+    const cat = document.getElementById('gal-category').value;
+    const desc = document.getElementById('gal-desc').value;
+    const file = document.getElementById('gal-image').files[0];
+
+    const fileName = `gallery/${Date.now()}-${file.name}`;
+    const { data: uploadData } = await window.supabaseClient.storage.from('products').upload(fileName, file);
+    if (uploadData) {
+        const { data: { publicUrl } } = window.supabaseClient.storage.from('products').getPublicUrl(fileName);
+        await window.supabaseClient.from('gallery').insert({ url: publicUrl, category: cat, description: desc });
+        alert('FOTO ADICIONADA!');
+        closeModal('gallery-modal');
+        loadGallery();
+    }
+}
+
+async function deleteGallery(id) {
+    if (confirm('EXCLUIR FOTO?')) {
+        await window.supabaseClient.from('gallery').delete().eq('id', id);
+        loadGallery();
+    }
+}
+
+// --- ABOUT MANAGEMENT ---
+function previewHomeImage(input) {
+    if (input.files && input.files[0]) {
+        aboutHomeFile = input.files[0];
+        document.getElementById('home-image-preview').innerHTML = `<div class="image-preview-item"><img src="${URL.createObjectURL(aboutHomeFile)}"></div>`;
+    }
+}
+
+async function loadAbout() {
+    // Carregar textos
+    const { data } = await window.supabaseClient.from('about_section').select('*').limit(1).single();
+    if (data) {
+        document.getElementById('about-fundacao').value = data.fundacao || '';
+        document.getElementById('about-bandeirao').value = data.bandeirao || '';
+        document.getElementById('about-crescimento').value = data.crescimento || '';
+        document.getElementById('about-acoes').value = data.acoes_sociais || '';
+        document.getElementById('about-loja').value = data.loja_oficial || '';
+    }
+
+    // Carregar imagem da Home do CMS
+    const { data: cmsImg } = await window.supabaseClient.from('site_content').select('value').eq('key', 'about_img').single();
+    if (cmsImg) {
+        document.getElementById('home-image-preview').innerHTML = `<div class="image-preview-item"><img src="${cmsImg.value}"></div>`;
+    }
+}
+
+async function handleAboutSubmit(e) {
+    e.preventDefault();
+    const fundacao = document.getElementById('about-fundacao').value;
+    const bandeirao = document.getElementById('about-bandeirao').value;
+    const crescimento = document.getElementById('about-crescimento').value;
+    const acoes_sociais = document.getElementById('about-acoes').value;
+    const loja_oficial = document.getElementById('about-loja').value;
+
+    const updateData = { fundacao, bandeirao, crescimento, acoes_sociais, loja_oficial };
+
+    // 1. Salvar Textos
+    const { data: current } = await window.supabaseClient.from('about_section').select('id').limit(1).single();
+    if (current) {
+        await window.supabaseClient.from('about_section').update(updateData).eq('id', current.id);
+    } else {
+        await window.supabaseClient.from('about_section').insert([updateData]);
+    }
+
+    // 2. Salvar Imagem da Home se houver novo arquivo
+    if (aboutHomeFile) {
+        const fileName = `cms/about_home_${Date.now()}.jpg`;
+        const { data: uploadData } = await window.supabaseClient.storage.from('products').upload(fileName, aboutHomeFile);
+        if (uploadData) {
+            const { data: { publicUrl } } = window.supabaseClient.storage.from('products').getPublicUrl(fileName);
+            await window.supabaseClient.from('site_content').upsert({ key: 'about_img', value: publicUrl, description: 'Imagem Quem Somos (Home)' });
+        }
+    }
+
+    alert('DADOS DA HISTÓRIA E IMAGEM SALVOS!');
+    aboutHomeFile = null;
+    loadAbout();
 }

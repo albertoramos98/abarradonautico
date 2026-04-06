@@ -3,67 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Admin - Os Centenários</title>
+    <title>PAINEL ADMIN - OS CENTENARIOS</title>
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .admin-nav {
-            background: #222;
-            padding: 15px 0;
-            color: #fff;
+        :root {
+            --vermelho: #e30613;
+            --branco: #ffffff;
+            --cinza-escuro: #333333;
+            --cinza-claro: #f5f5f5;
         }
+
+        body {
+            background-color: var(--cinza-claro);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: var(--cinza-escuro);
+        }
+
+        /* Branding titulos mantêm Ultras Liberi */
+        .logo, .admin-nav h2, #modal-title {
+            font-family: 'Ultras Liberi', sans-serif;
+            text-transform: uppercase;
+        }
+
+        /* UI do painel usa fonte de sistema para melhor leitura e acentos */
+        h2, h3, .tab-btn, label, button, th, select, input, textarea {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .admin-nav {
+            background-color: var(--vermelho);
+            padding: 15px 0;
+            color: var(--branco);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
         .admin-nav .container {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
+        .btn-logout {
+            background: var(--branco);
+            color: var(--vermelho);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
         .admin-tabs {
             margin: 30px 0;
+            display: flex;
+            gap: 10px;
             border-bottom: 2px solid #ddd;
+            overflow-x: auto;
         }
+
         .tab-btn {
-            padding: 10px 20px;
+            padding: 12px 25px;
             cursor: pointer;
             border: none;
             background: none;
-            font-size: 1.1rem;
-            font-weight: bold;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--cinza-escuro);
+            transition: all 0.3s;
+            white-space: nowrap;
+            text-transform: uppercase;
         }
+
         .tab-btn.active {
             color: var(--vermelho);
-            border-bottom: 3px solid var(--vermelho);
+            border-bottom: 4px solid var(--vermelho);
         }
+
         .tab-content {
             display: none;
             padding: 20px 0;
         }
+
         .tab-content.active {
             display: block;
         }
+
+        .card-admin {
+            background: var(--branco);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
         .table-admin {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
         }
+
         .table-admin th, .table-admin td {
-            padding: 12px;
+            padding: 15px;
             text-align: left;
-            border-bottom: 1px solid #ddd;
+            border-bottom: 1px solid #eee;
         }
-        .table-admin th {
-            background: #f9f9f9;
+
+        .table-admin th { 
+            color: var(--vermelho);
+            text-transform: uppercase;
+            font-weight: bold;
         }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--vermelho);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-bottom: 15px;
+        }
+
+        .btn-admin {
+            background: var(--vermelho);
+            color: var(--branco);
+            border: none;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .btn-admin:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(227,6,19,0.2); }
+
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
+
         .modal-content {
-            background: #fff;
+            background: var(--branco);
             padding: 30px;
             border-radius: 8px;
             width: 90%;
@@ -71,54 +165,52 @@
             max-height: 90vh;
             overflow-y: auto;
         }
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        .form-full {
-            grid-column: 1 / -1;
-        }
+
         .image-preview {
+            display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;
+        }
+        .image-preview-item { width: 120px; height: 120px; position: relative; border: 1px solid #ddd; border-radius: 4px; overflow: hidden; }
+        .image-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+        .btn-delete-img { position: absolute; top: 2px; right: 2px; background: red; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .filter-container {
+            margin-bottom: 20px;
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            margin-top: 10px;
         }
-        .image-preview-item {
-            width: 80px;
-            height: 80px;
-            position: relative;
-            border: 1px solid #ddd;
+
+        .filter-btn-admin {
+            background: #eee;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            text-transform: uppercase;
         }
-        .image-preview-item img {
-            width: 100%; height: 100%; object-fit: cover;
-        }
-        .btn-delete-img {
-            position: absolute;
-            top: -5px; right: -5px;
-            background: red; color: white;
-            border: none; border-radius: 50%;
-            width: 20px; height: 20px;
-            font-size: 12px; cursor: pointer;
-        }
-        .image-notice {
-            background: #fff3cd;
-            padding: 10px;
-            border-radius: 4px;
-            margin-bottom: 15px;
-            font-size: 0.9rem;
-            color: #856404;
+
+        .filter-btn-admin.active {
+            background: var(--vermelho);
+            color: white;
         }
     </style>
 </head>
-<body style="background: #fdfdfd;">
+<body>
     <nav class="admin-nav">
         <div class="container">
-            <h3>PAINEL ADMIN</h3>
-            <div>
+            <h2 class="logo">ADMIN <span>OS CENTENARIOS</span></h2>
+            <div style="display:flex; align-items:center; gap:15px;">
                 <span id="user-email"></span>
-                <button onclick="logout()" class="btn" style="padding: 5px 15px; font-size: 0.8rem; margin-left: 10px;">Sair</button>
+                <button onclick="logout()" class="btn-logout">SAIR</button>
             </div>
         </div>
     </nav>
@@ -126,98 +218,144 @@
     <div class="container">
         <div class="admin-tabs">
             <button class="tab-btn active" data-tab="products">Produtos</button>
-            <button class="tab-btn" data-tab="cms">Conteúdo Site</button>
+            <button class="tab-btn" data-tab="cms">Textos Fixos</button>
+            <button class="tab-btn" data-tab="gallery">Galeria</button>
+            <button class="tab-btn" data-tab="about">História (Sobre Nós)</button>
         </div>
 
-        <!-- Products Tab -->
+        <!-- ABA PRODUTOS -->
         <div id="products" class="tab-content active">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Gerenciar Produtos</h2>
-                <button onclick="openProductModal()" class="btn">Novo Produto</button>
+            <div class="card-admin">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h2>Gerenciar Produtos</h2>
+                    <button onclick="openProductModal()" class="btn-admin">Novo Produto</button>
+                </div>
+                <table class="table-admin">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Preço</th>
+                            <th>Estoque</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-list-body"></tbody>
+                </table>
             </div>
-            
-            <table class="table-admin">
-                <thead>
-                    <tr>
-                        <th>Imagem</th>
-                        <th>Nome</th>
-                        <th>Preço</th>
-                        <th>Estoque</th>
-                        <th>Categoria</th>
-                        <th>Status</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="product-list-body">
-                    <!-- Loaded via JS -->
-                </tbody>
-            </table>
         </div>
 
-        <!-- CMS Tab -->
+        <!-- ABA CMS -->
         <div id="cms" class="tab-content">
-            <h2>Conteúdo do Site</h2>
-            <div id="cms-list" style="margin-top: 20px;">
-                <!-- Loaded via JS -->
+            <div class="card-admin">
+                <h2>Textos Fixos do Site</h2>
+                <div id="cms-list"></div>
+            </div>
+        </div>
+
+        <!-- ABA GALERIA -->
+        <div id="gallery" class="tab-content">
+            <div class="card-admin">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px;">
+                    <h2>Galeria de Fotos</h2>
+                    <button onclick="openGalleryModal()" class="btn-admin">Adicionar Foto</button>
+                </div>
+                
+                <div class="filter-container">
+                    <button class="filter-btn-admin active" onclick="filterGallery('Todos')">Todos</button>
+                    <button class="filter-btn-admin" onclick="filterGallery('Jogos')">Jogos</button>
+                    <button class="filter-btn-admin" onclick="filterGallery('Torcida')">Torcida</button>
+                    <button class="filter-btn-admin" onclick="filterGallery('Eventos')">Eventos</button>
+                    <button class="filter-btn-admin" onclick="filterGallery('Historico')">Histórico</button>
+                </div>
+
+                <div id="gallery-list" class="gallery-grid"></div>
+            </div>
+        </div>
+
+        <!-- ABA SOBRE (HISTORIA) -->
+        <div id="about" class="tab-content">
+            <div class="card-admin">
+                <h2>Editar História da Torcida</h2>
+                <form id="about-form">
+                    <div style="background: #fdf2f2; padding: 20px; border-radius: 8px; margin-bottom: 30px; border: 1px solid #ffebeb;">
+                        <label style="color: var(--vermelho); font-size: 1rem;">Imagem da Seção Quem Somos (Página Inicial)</label>
+                        <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Essa é a foto que aparece ao lado do texto "Quem Somos" na página de entrada do site.</p>
+                        <input type="file" id="about-home-image" accept="image/*" onchange="previewHomeImage(this)">
+                        <div id="home-image-preview" class="image-preview" style="margin-top: 10px;"></div>
+                    </div>
+
+                    <label>Fundação</label>
+                    <textarea id="about-fundacao" placeholder="Conte sobre o início da torcida..." style="height: 120px;"></textarea>
+
+                    <label>Primeiro Bandeirão</label>
+                    <textarea id="about-bandeirao" placeholder="Conte sobre o primeiro grande bandeirão..." style="height: 120px;"></textarea>
+
+                    <label>Crescimento</label>
+                    <textarea id="about-crescimento" placeholder="Como a torcida cresceu ao longo dos anos..." style="height: 120px;"></textarea>
+
+                    <label>Ações Sociais</label>
+                    <textarea id="about-acoes" placeholder="Descreva as atividades sociais realizadas..." style="height: 120px;"></textarea>
+
+                    <label>Loja Oficial</label>
+                    <textarea id="about-loja" placeholder="Sobre a nossa loja e materiais..." style="height: 120px;"></textarea>
+
+                    <button type="submit" class="btn-admin" style="margin-top: 10px;">Salvar História Completa</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Product Modal -->
+    <!-- MODAL PRODUTOS -->
     <div id="product-modal" class="modal">
         <div class="modal-content">
-            <h2 id="modal-title">Novo Produto</h2>
-            <div class="image-notice">
-                <i class="fas fa-info-circle"></i> As imagens devem seguir proporção 1:1 para melhor encaixe no layout. Recomendado: 1000x1000px.
-            </div>
+            <h2 id="modal-title">NOVO PRODUTO</h2>
             <form id="product-form">
                 <input type="hidden" id="product-id">
-                <div class="form-grid">
-                    <div class="form-full">
-                        <label>Nome</label>
-                        <input type="text" id="prod-name" required style="width:100%; padding:8px;">
-                    </div>
-                    <div class="form-full">
-                        <label>Descrição</label>
-                        <textarea id="prod-desc" style="width:100%; padding:8px; height:80px;"></textarea>
-                    </div>
-                    <div>
-                        <label>Preço (R$)</label>
-                        <input type="number" step="0.01" id="prod-price" required style="width:100%; padding:8px;">
-                    </div>
-                    <div>
-                        <label>Estoque</label>
-                        <input type="number" id="prod-stock" required style="width:100%; padding:8px;">
-                    </div>
-                    <div>
-                        <label>Categoria</label>
-                        <select id="prod-category" style="width:100%; padding:8px;">
-                            <option value="Camisas">Camisas</option>
-                            <option value="Acessórios">Acessórios</option>
-                            <option value="Decoração">Decoração</option>
-                            <option value="Bandeiras">Bandeiras</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Status</label>
-                        <select id="prod-status" style="width:100%; padding:8px;">
-                            <option value="active">Ativo</option>
-                            <option value="inactive">Inativo</option>
-                        </select>
-                    </div>
-                    <div class="form-full">
-                        <label>Ocultar se esgotado?</label>
-                        <input type="checkbox" id="prod-hide-out">
-                    </div>
-                    <div class="form-full">
-                        <label>Imagens</label>
-                        <input type="file" id="prod-images" multiple accept="image/*" onchange="validateAndPreviewImages(this)">
-                        <div id="preview-container" class="image-preview"></div>
-                    </div>
+                <label>NOME</label>
+                <input type="text" id="prod-name" required>
+                <label>DESCRICAO</label>
+                <textarea id="prod-desc"></textarea>
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                    <div><label>PRECO</label><input type="number" step="0.01" id="prod-price" required></div>
+                    <div><label>ESTOQUE</label><input type="number" id="prod-stock" required></div>
                 </div>
-                <div style="margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px;">
-                    <button type="button" onclick="closeProductModal()" class="btn" style="background: #ccc;">Cancelar</button>
-                    <button type="submit" class="btn">Salvar Produto</button>
+                <label>CATEGORIA</label>
+                <select id="prod-category">
+                    <option value="CAMISAS">CAMISAS</option>
+                    <option value="ACESSORIOS">ACESSORIOS</option>
+                    <option value="DECORACAO">DECORACAO</option>
+                    <option value="BANDEIRAS">BANDEIRAS</option>
+                </select>
+                <label>FOTOS (QUADRADAS 1:1)</label>
+                <input type="file" id="prod-images" multiple accept="image/*" onchange="validateAndPreviewImages(this)">
+                <div id="preview-container" class="image-preview"></div>
+                <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" onclick="closeModal('product-modal')" class="btn-admin" style="background:#ccc;">CANCELAR</button>
+                    <button type="submit" class="btn-admin">SALVAR</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL GALERIA -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">ADICIONAR FOTO NA GALERIA</h2>
+            <form id="gallery-form">
+                <label>CATEGORIA</label>
+                <select id="gal-category">
+                    <option value="Jogos">JOGOS</option>
+                    <option value="Torcida">TORCIDA</option>
+                    <option value="Eventos">EVENTOS</option>
+                    <option value="Historico">HISTORICO</option>
+                </select>
+                <label>FOTO</label>
+                <input type="file" id="gal-image" accept="image/*" required>
+                <label>DESCRICAO (OPCIONAL)</label>
+                <input type="text" id="gal-desc">
+                <div style="margin-top:20px; display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" onclick="closeModal('gallery-modal')" class="btn-admin" style="background:#ccc;">CANCELAR</button>
+                    <button type="submit" class="btn-admin">SALVAR</button>
                 </div>
             </form>
         </div>

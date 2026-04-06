@@ -53,11 +53,11 @@ document.addEventListener('DOMContentLoaded', async function() {
             card.innerHTML = `
                 <img src="${imageUrl}" alt="${product.name}" class="product-img">
                 <div class="product-info">
-                    <h3>${product.name}</h3>
+                    <h3>${product.name.toUpperCase()}</h3>
                     <p>R$ ${product.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</p>
                     ${isOutOfStock ? 
                         '<span class="out-of-stock" style="color: var(--vermelho); font-weight: bold; display: block; margin-bottom: 10px;">ESGOTADO</span>' : 
-                        `<a href="#" class="btn" onclick="addToCart('${product.id}')">Adicionar ao Carrinho</a>`
+                        `<button class="btn" onclick="cartHook.addItem({id:'${product.id}', name:'${product.name}', price:${product.price}, image:'${imageUrl}'})">ADICIONAR AO CARRINHO</button>`
                     }
                 </div>
             `;
