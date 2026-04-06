@@ -178,13 +178,13 @@
                 return;
             }
 
-            window.location.href = 'dashboard.html';
+            window.location.href = '/admin/dashboard.html';
         });
 
         // Check if already logged in
         window.supabaseClient.auth.getSession().then(({ data: { session } }) => {
             if (session && session.user.user_metadata.role === 'admin') {
-                window.location.href = 'dashboard.html';
+                window.location.href = '/admin/dashboard.html';
             }
         });
     </script>
